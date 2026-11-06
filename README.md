@@ -1,11 +1,10 @@
-
 # BayesStudy — Personalized Bayesian Study Planner
 
 A personalized study planning system that uses Bayesian networks to estimate exam readiness and stress risk, with the goal of recommending study schedules that balance academic performance and student well-being.
 
 ## Project Status
 
-**In Development — Week 8: Bayesian Network Foundation Completed**
+**In Development — Week 9: Bayesian Inference Completed**
 
 The project is being developed incrementally as part of a university course project.
 
@@ -16,11 +15,12 @@ The project is being developed incrementally as part of a university course proj
 - Handcrafted Conditional Probability Tables (CPTs)
 - Exam readiness and stress risk modeling
 - Model structure and CPT validation
-- 7 automated tests using pytest
+- Bayesian inference using Variable Elimination
+- Predictions based on complete or partial student evidence
+- 12 automated tests using pytest
 
 ### Planned Features
 
-- Bayesian inference using Variable Elimination
 - Expected utility-based study recommendations
 - Three study actions: intensive study, light review, and rest
 - Google Calendar integration
@@ -46,6 +46,35 @@ The model uses handcrafted CPTs to represent dependencies between these variable
 
 See [Network Design](docs/network_design.md) for the complete network structure and probability definitions.
 
+## Bayesian Inference
+
+The system uses pgmpy's Variable Elimination algorithm to calculate posterior probabilities based on observed student information.
+
+It estimates:
+
+- P(ExamReadiness = High | Evidence)
+- P(StressRisk = High | Evidence)
+
+The system supports both complete and partial evidence.
+
+### Example Student
+
+| Variable | Value |
+|---|---|
+| Concept1Difficulty | Hard |
+| Concept2Difficulty | Easy |
+| Concept3Difficulty | Hard |
+| Mastery | Low |
+| Stress | High |
+| DaysUntilExam | Near |
+
+Expected model predictions:
+
+- **High Exam Readiness: 15.00%**
+- **High Stress Risk: 90.00%**
+
+These probabilities are generated from the handcrafted CPTs and are not empirically validated predictions of real student outcomes.
+
 ## Tech Stack
 
 - Python 3.12
@@ -55,6 +84,7 @@ See [Network Design](docs/network_design.md) for the complete network structure 
 - pytest
 
 Planned integrations:
+
 - Google Calendar API
 - Streamlit
 
@@ -67,9 +97,11 @@ bayesian-study-planner/
 ├── src/
 │   ├── __init__.py
 │   ├── cpt.py
-│   └── bayesian_model.py
+│   ├── bayesian_model.py
+│   └── inference.py
 ├── tests/
-│   └── test_bayesian_model.py
+│   ├── test_bayesian_model.py
+│   └── test_inference.py
 ├── requirements.txt
 ├── .gitignore
 └── README.md
@@ -114,6 +146,25 @@ Number of CPTs: 8
 Model valid: True
 ```
 
+## Running Bayesian Inference
+
+Run the example student prediction:
+
+```bash
+python -m src.inference
+```
+
+Expected output:
+
+```text
+Student Prediction
+------------------
+Exam readiness (High): 15.00%
+Stress risk (High): 90.00%
+```
+
+The system uses Variable Elimination to calculate posterior probabilities based on the provided student evidence.
+
 ## Running Tests
 
 Run all automated tests:
@@ -122,18 +173,26 @@ Run all automated tests:
 python -m pytest -v
 ```
 
-Current test results:
+Expected test results:
 
-**7 tests passed.**
+**12 tests passed.**
 
-Tests cover model validity, variable and edge counts, CPT normalization, and parent relationships.
+Tests cover:
+
+- Bayesian network validity
+- Variable and edge counts
+- CPT normalization
+- Parent relationships
+- Probability bounds
+- Inference with complete and partial evidence
+- Effects of mastery and stress on predictions
 
 ## Development Roadmap
 
 | Week | Focus | Status |
 |---|---|---|
 | 8 | Bayesian network structure and CPTs | Completed |
-| 9 | Bayesian inference | Planned |
+| 9 | Bayesian inference using Variable Elimination | Completed |
 | 10 | Expected utility and decision making | Planned |
 | 11 | Google Calendar integration | Planned |
 | 12 | Streamlit UI and scenario simulations | Planned |
@@ -142,10 +201,14 @@ Tests cover model validity, variable and edge counts, CPT normalization, and par
 
 ## Limitations
 
-The current CPT probabilities are handcrafted for a prototype and have not been estimated or validated using real student data.
+The CPT probabilities are handcrafted for a prototype and have not been estimated or validated using real student data.
 
-The current implementation validates the probabilistic model but does not yet provide study recommendations or calendar scheduling.
+The current system provides probabilistic predictions but does not yet generate optimal study recommendations or automatically schedule calendar events.
+
+Future development will introduce expected utility calculations to balance exam readiness, stress risk, and study effort.
 
 ## Author
 
 EsmeYang
+
+University of British Columbia Okanagan — Computer Science
